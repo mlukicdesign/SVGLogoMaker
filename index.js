@@ -1,29 +1,36 @@
 // initialize dependencies
-const inquirer = require("inquirer");
 const fs = require('fs');
+const inquirer = require('inquirer');
+
+// module import
+const {Circle, Square, Triangle} = require('./lib/shape.js');
 
 
 
 // SVG Class with constructor fucntion to render output
 
 class SVGLogo {
-    constructor(){
+    constructor() {
         this.textElement = ''
         this.shapeElement = ''
     }
-    render(){
+    
+    render() {
 
         return `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="300" height="200">${this.shapeElement}${this.textElement}</svg>`
     }
-    setTextElement(text,color){
+    setTextElement(text, color) {
         this.textElement = `<text x="150" y="125" font-size="60" text-anchor="middle" fill="${color}">${text}</text>`
     }
-    setShapeElement(shape){
+    setShapeElement(shape) {
         this.shapeElement = shape.render()
 
     }
-    
+
 }
+
+
+
 
 
 
@@ -55,39 +62,46 @@ const questions = [
     },
 ]
 
+function writeToFile(filename, content) {
+    fs.writeFile(filename, content, (err) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+      console.log(`Content written to ${filename} successfully.`);
+    });
+  }
+
+
 
 // Async Function
 
 async function generateLogo() {
     console.log('Generating Logo')
-    
+
     let userString = '';
-    let selectedTextColour = '';
-    let selectedShapeColour = '';
+    let selectedTextColor = '';
+    let selectedShapeColor = '';
     let selectedShape = '';
 
 
+    // Handle user text input
 
-
-// Handle user text input
-
- const answers = await inquirer.prompt(questions);
+    const answers = await inquirer.prompt(questions);
 
     if (answers.text.length > 0 && answers.text.length < 4) {
-        // 1-3 chars, valid entry
-        user_text = answers.text;
-      } else {
-        // 0 or 4+ chars, invalid entry
+        userString = answers.text;
+    } else {
         console.log("Error! Please enter no more then 1 - 3 characters");
         return;
-      }
+    }
 
-      // Apply users selected code
+    // Apply users selected code
 
 
-// Handle shape selection
+    // Handle shape selection
 
-      switch (selectedShape_type.toLowerCase()) {
+    switch (selectedShape.toLowerCase()) {
         case "square":
             selectedShape = new Square();
             console.log('User selected a square');
@@ -100,8 +114,19 @@ async function generateLogo() {
             selectedShape = new Triangle();
             console.log('User selected Triangle');
             break;
-            default: 
-            console.log('Error')
-      }
+        default:
+            console.log('An error has occured')
+    }
 
+    // selectedShapeColor.setColor(selectedShapeColor)
+
+    const svg = new SVGLogo();
+    svg.setTextElement(userString, selectedTextColor);
+    svg.setShapeElement(selectedShape);
+    userString = svg.render();
+
+    writeToFile();
+   
 }
+
+generateLogo();
