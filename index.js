@@ -16,7 +16,7 @@ class SVGLogo {
 
   setTextElement(color, text) {
     // Set the text element with the provided color and text
-    this.textElement = `<text x="150" y="125" font-size="60" text-anchor="middle" fill="${color}">${text}</text>`;
+    this.textElement = `<text x="150" y="125" font-size="60" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" fill="${color}">${text}</text>`;
   }
 
   setShapeElement(shape) {
@@ -24,6 +24,8 @@ class SVGLogo {
     this.shapeElement = shape.render();
   }
 }
+
+// Inquirer questions array
 
 const questions = [
   {
@@ -49,8 +51,8 @@ const questions = [
   },
 ];
 
+// Write the content to a file with the provided filename
 function writeToFile(filename, content) {
-  // Write the content to a file with the provided filename
   fs.writeFile(filename, content, (err) => {
     if (err) {
       console.error(err);
@@ -61,45 +63,45 @@ function writeToFile(filename, content) {
 }
 
 async function generateLogo() {
-  console.log('Generating Logo');
 
   // Prompt the user with questions and get the answers
   const { text, textColor, shape, shapeColor } = await inquirer.prompt(questions);
 
   let selectedShape;
 
-  // Create the selected shape based on user input
   switch (shape.toLowerCase()) {
     case 'square':
       selectedShape = new Square();
-      console.log('User selected a square');
+      setLogoProperties(selectedShape);
       break;
     case 'circle':
       selectedShape = new Circle();
-      console.log('User selected a circle');
+      setLogoProperties(selectedShape);
       break;
     case 'triangle':
       selectedShape = new Triangle();
-      console.log('User selected a triangle');
+      setLogoProperties(selectedShape);
       break;
     default:
       console.log('An error has occurred');
       return;
   }
+  
+  function setLogoProperties(shape) {
+    shape.setColor(shapeColor);
+  
+    const svg = new SVGLogo();
+    // Set the text and text color in the SVGLogo instance
+    svg.setTextElement(textColor, text);
+    // Set the shape in the SVGLogo instance
+    svg.setShapeElement(shape);
+    // Render the final logo content
+    const logoContent = svg.render();
+  
+    // Write the logo content to a file named 'logo.svg'
+    writeToFile('logo.svg', logoContent);
+  }
 
-  // Set the color of the selected shape
-  selectedShape.setColor(shapeColor);
-
-  const svg = new SVGLogo();
-  // Set the text and text color in the SVGLogo instance
-  svg.setTextElement(textColor, text);
-  // Set the shape in the SVGLogo instance
-  svg.setShapeElement(selectedShape);
-  // Render the final logo content
-  const logoContent = svg.render();
-
-  // Write the logo content to a file named 'logo.svg'
-  writeToFile('logo.svg', logoContent);
 }
 
 // Call the generateLogo function to start generating the logo
