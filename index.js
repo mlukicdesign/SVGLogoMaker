@@ -55,10 +55,10 @@ const questions = [
 function writeToFile(filename, content) {
     fs.writeFile(filename, content, (err) => {
         if (err) {
-            console.error(err);
+            console.error('An error has occured');
             return;
         }
-        console.log(`Content written to ${filename} successfully.`);
+        console.log(`Logo created successfully.`);
     });
 }
 
