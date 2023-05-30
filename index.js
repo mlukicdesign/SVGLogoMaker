@@ -108,5 +108,6 @@ async function generateLogo() {
   }
 }
 
+console.log();
 // Call the generateLogo function to start generating the logo
 generateLogo();
